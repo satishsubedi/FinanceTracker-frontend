@@ -1,0 +1,14 @@
+.wrapper {
+  min-height: 100vh;
+  background: black;
+  color: white;
+}
+.main {
+  min-height: calc(100vh-250px);
+}
+.out {
+  color: red !important;
+}
+.in {
+  color: green !important;
+}
