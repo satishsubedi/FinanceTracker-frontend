@@ -3,7 +3,7 @@ import { useUser } from "../context/UserContext";
 import { useEffect } from "react";
 
 export const CustomModal = ({ children }) => {
-  const { show, toggleShow, getTransaction } = useUser();
+  const { show, toggleShow, getTransaction, singletxn } = useUser();
   useEffect(() => {
     getTransaction();
   }, []);
@@ -15,8 +15,13 @@ export const CustomModal = ({ children }) => {
       keyboard={false}
       centered
     >
-      <Modal.Header closeButton>
-        <Modal.Title>Add New Transaction</Modal.Title>
+      <Modal.Header closeButton onClick={() => (singletxn._id = "")}>
+        {singletxn?._id ? (
+          <Modal.Title>Edit Transaction</Modal.Title>
+        ) : (
+          <Modal.Title>Add New Transaction</Modal.Title>
+        )}
+        {/* <Modal.Title>Add New Transaction</Modal.Title> */}
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
     </Modal>

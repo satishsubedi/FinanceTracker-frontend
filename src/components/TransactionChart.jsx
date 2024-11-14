@@ -33,11 +33,28 @@ export const TransactionChart = () => {
   }, 0);
 
   const incomeTransaction = charttransaction.filter(
-    (item) => item.type === "income"
+    (item) => item.type === "income" && item.createdAt.slice(0, 10)
   );
+  console.log(incomeTransaction);
   const expenseTransaction = charttransaction.filter(
-    (item) => item.type === "expense"
+    (item) => item.type === "expense" && item.createdAt.slice(0, 10)
   );
+  console.log(expenseTransaction);
+  // expenseTransaction.createdAt = expenseTransaction?.createdAt?.slice(0, 10);
+  // console.log(expenseTransaction);
+
+  const expenseTxnArg = expenseTransaction.map((item) => ({
+    ...item,
+    createdAt: item.createdAt.slice(0, 10),
+  }));
+  console.log(expenseTxnArg);
+
+  const incomeTxnArg = incomeTransaction.map((item) => ({
+    ...item,
+    createdAt: item.createdAt.slice(0, 10),
+  }));
+  console.log(incomeTxnArg);
+
   const income = charttransaction.reduce((acc, t) => {
     return t.type === "income" ? acc + t.amount : acc - 0;
   }, 0);
@@ -129,10 +146,14 @@ export const TransactionChart = () => {
               <LineChart
                 width={300}
                 height={250}
-                data={incomeTransaction}
+                data={incomeTxnArg}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
-                <XAxis dataKey={"createdAt.slice(0,10)"} />
+                <XAxis
+                  dataKey={"createdAt"}
+                  // tickFormatter={formatXAxis("createdAt")}
+                  // type={"category"}
+                />
                 <YAxis dataKey={"amount"} />
                 <Tooltip />
                 <Legend
@@ -155,13 +176,13 @@ export const TransactionChart = () => {
               <LineChart
                 width={300}
                 height={250}
-                data={expenseTransaction}
+                data={expenseTxnArg}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
                 {/* {
                   const a = "createdAt".slice(0,10)
                 } */}
-                <XAxis dataKey={"createdAt.slice(0, 10)"} />
+                <XAxis dataKey={"createdAt"} />
                 <YAxis dataKey={"amount"} />
                 <Tooltip />
                 <Legend verticalAlign="top" iconType="rect" />

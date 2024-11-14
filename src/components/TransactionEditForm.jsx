@@ -1,25 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import { CustomInput } from "./CustomInput";
 import Button from "react-bootstrap/Button";
 import { useForm } from "../hooks/useForm";
 import { useUser } from "../context/UserContext";
-
-const handleOnUpdate = (e) => {
-  e.preventDefault();
-  console.log(formdata);
-};
+import { editTransaction } from "../helpers/axioshelpers";
+import { toast } from "react-toastify";
+import moment from "moment";
 
 export const TransactionEditForm = () => {
-  const { singletxn } = useUser();
-  console.log(singletxn.amount);
+  const { singletxn, toggleShow, getTransaction } = useUser();
+  // console.log(singletxn.amount);
   const initialState = {
     type: singletxn.type,
     title: singletxn.title,
     amount: singletxn.amount,
+    // tdate: moment(singletxn.tdate.slice(0, 10), "MM DD YYYY"),
     tdate: singletxn.tdate.slice(0, 10),
   };
+
   const { formdata, setFormdata, handleOnchange } = useForm(initialState);
+  useEffect(() => {
+    setFormdata(singletxn);
+  }, [singletxn]);
+
+  const handleOnUpdate = async (e) => {
+    console.log(formdata);
+
+    const pending = editTransaction(formdata);
+    toast.promise(pending, { pending: "Please wait" });
+    const { status, message } = await pending;
+    toast[status](message);
+    if (status === "success") {
+      toggleShow(false);
+      getTransaction();
+      singletxn._id = "";
+
+      // singletxn = "";
+    }
+  };
+  console.log(formdata.tdate);
   const fields = [
     {
       label: "Title:",
@@ -43,7 +63,7 @@ export const TransactionEditForm = () => {
       placeholder: "",
       required: true,
       name: "tdate",
-      value: formdata.tdate,
+      value: formdata.tdate.slice(0, 10),
     },
   ];
   return (

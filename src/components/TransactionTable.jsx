@@ -18,7 +18,7 @@ export const TransactionTable = () => {
     transaction,
     toggleShow,
     getTransaction,
-    total,
+
     getTransactionByID,
     singletxn,
   } = useUser();
@@ -30,6 +30,10 @@ export const TransactionTable = () => {
   useEffect(() => {
     setDisplayTransaction(transaction);
   }, [transaction]);
+
+  const total = displaytransaction.reduce((acc, t) => {
+    return t.type === "income" ? acc + t.amount : acc - t.amount;
+  }, 0);
 
   const handleOnSearch = (e) => {
     const value = e.target.value;
@@ -65,9 +69,9 @@ export const TransactionTable = () => {
   const handleOnEdit = (id) => {
     console.log(id);
     getTransactionByID(id);
-    console.log(singletxn);
     toggleShow(true);
   };
+
   return (
     <>
       <div className="d-flex m-2 justify-content-between mt-5">
@@ -76,7 +80,9 @@ export const TransactionTable = () => {
           <Form.Control type="text" onChange={handleOnSearch} />
         </div>
         <div>
-          <Button onClick={() => toggleShow(true)}>
+          <Button
+            onClick={() => toggleShow(true) && console.log(singletxn._id)}
+          >
             <CiCirclePlus />
             Add new Transaction
           </Button>

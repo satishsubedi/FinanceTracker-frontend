@@ -14,14 +14,13 @@ const initialState = {
 };
 
 export const TransactionForm = () => {
-  const { getTransaction, transaction, toggleShow } = useUser();
+  const { getTransaction, transaction, toggleShow, singletxn } = useUser();
   useEffect(() => {
     getTransaction();
   }, []);
   const { formdata, setFormdata, handleOnchange } = useForm(initialState);
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    console.log(formdata);
     const pending = postTransaction(formdata);
     toast.promise(pending, {
       pending: "please wait",

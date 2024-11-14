@@ -5,6 +5,7 @@ import { CustomInput } from "./CustomInput";
 import { toast } from "react-toastify";
 import { postUser } from "../helpers/axioshelpers";
 import { useForm } from "../hooks/useForm";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const initialState = {
   name: "",
@@ -14,6 +15,8 @@ const initialState = {
 };
 export const SignUpForm = () => {
   const { formdata, setFormdata, handleOnchange } = useForm(initialState);
+  const [showpassword, setShowPassword] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   const fields = [
     {
       label: "Name",
@@ -33,14 +36,14 @@ export const SignUpForm = () => {
     },
     {
       label: "Password",
-      type: "password",
-      placeholder: "Enter Password",
+      type: showpassword ? "text" : "password",
+      placeholder: "Enter Password ",
       required: true,
       name: "password",
       value: formdata.password,
     },
     {
-      type: "password",
+      type: showpassword ? "text" : "password",
       label: "Confirm Password",
       placeholder: "Confirm Password",
       required: true,
@@ -48,17 +51,29 @@ export const SignUpForm = () => {
       value: formdata.confirmpassword,
     },
   ];
+  const handleOnShowPassword = () => {
+    setShowPassword(!showpassword);
+  };
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
+    console.log(formdata);
     const { confirmpassword, ...rest } = formdata;
+
+    if (rest.password.length < 8) {
+      return toast("please enter password of length greater than 8");
+    }
     if (confirmpassword !== rest.password) {
       return toast.error("Password does not matched!!");
     }
-    // setFormdata(rest);
-    const { status, message } = await postUser(rest);
+
+    const pendingResponse = postUser(rest);
+    toast.promise(pendingResponse, { pending: "PLEASE WAIT......." });
+
+    const { status, message } = await pendingResponse;
     toast[status](message);
     status === "success" && setFormdata(initialState);
+    setDisabled(true);
   };
 
   return (
@@ -69,8 +84,21 @@ export const SignUpForm = () => {
           <CustomInput key={input.name} {...input} onChange={handleOnchange} />
         ))}
 
+        <div className="password-eye">
+          {!showpassword ? (
+            <AiFillEye onClick={handleOnShowPassword} />
+          ) : (
+            <AiFillEyeInvisible onClick={handleOnShowPassword} />
+          )}
+        </div>
+
         <div className="d-grid">
-          <Button variant="primary" type="submit" onClick={handleOnSubmit}>
+          <Button
+            variant="primary"
+            type="submit"
+            onClick={handleOnSubmit}
+            disabled={disabled}
+          >
             Submit
           </Button>
         </div>

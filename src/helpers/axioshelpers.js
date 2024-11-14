@@ -1,5 +1,5 @@
 import axios from "axios";
-const rootApiEP = "http://localhost:8000/api/v1";
+const rootApiEP = import.meta.env.VITE_ROOT_API + "/api/v1";
 
 const getToken = () => {
   return localStorage.getItem("jwttoken");
@@ -104,4 +104,14 @@ export const deleteTransaction = async (data) => {
 };
 
 //Edit Transaction
-export const editTransaction = async (data) => {};
+export const editTransaction = async (data) => {
+  const obj = {
+    method: "patch",
+    url: rootApiEP + "/transaction",
+    headers: {
+      Authorization: getToken(),
+    },
+    data,
+  };
+  return apiProcessor(obj);
+};

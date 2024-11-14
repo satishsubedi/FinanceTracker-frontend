@@ -29,7 +29,7 @@ export const SignInForm = () => {
     {
       label: "Email",
       type: "email",
-      placeholder: "Enter Email",
+      placeholder: "Enter Email   ",
       required: true,
       name: "email",
       value: formdata.email,
@@ -47,16 +47,18 @@ export const SignInForm = () => {
   console.log(formdata);
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    console.log(formdata);
-    const pendingResponse = loginUser(formdata);
-    toast.promise(pendingResponse, {
-      pending: "please wait...",
-    });
-    const { status, message, user, token } = await pendingResponse;
-    console.log({ status, message, user, token });
-    toast[status](message);
-    setUser(user);
-    localStorage.setItem("jwttoken", token);
+    if (formdata.password === "" || formdata.email === "") {
+      toast("please enter the name and password");
+    } else {
+      console.log(formdata);
+      const pendingResponse = loginUser(formdata);
+      // toast.promise(pendingResponse, { pending: "please wait..." });
+      const { status, message, user, token } = await pendingResponse;
+      console.log({ status, message, user, token });
+      toast[status](message);
+      setUser(user);
+      localStorage.setItem("jwttoken", token);
+    }
   };
 
   return (
