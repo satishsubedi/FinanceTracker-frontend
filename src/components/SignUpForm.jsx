@@ -58,10 +58,13 @@ export const SignUpForm = () => {
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     console.log(formdata);
+    const pattern = `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`;
+    console.log(typeof pattern);
     const { confirmpassword, ...rest } = formdata;
-
-    if (rest.password.length < 8) {
-      return toast("please enter password of length greater than 8");
+    if (!rest.password.match(pattern)) {
+      return toast(
+        "Password should be 8-20 characters and include atleast 1 letter 1 number and 1 special character"
+      );
     }
     if (confirmpassword !== rest.password) {
       return toast.error("Password does not matched!!");
@@ -81,7 +84,12 @@ export const SignUpForm = () => {
       <h4 className="mb-4">Signup Here</h4>
       <Form>
         {fields.map((input) => (
-          <CustomInput key={input.name} {...input} onChange={handleOnchange} />
+          <CustomInput
+            key={input.name}
+            {...input}
+            onChange={handleOnchange}
+            onClick={() => setDisabled(false)}
+          />
         ))}
 
         <div className="password-eye">
